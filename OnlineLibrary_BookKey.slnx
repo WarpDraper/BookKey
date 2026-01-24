@@ -1,6 +1,8 @@
 <Solution>
-  <Project Path="BLL/BLL.csproj" />
-  <Project Path="DLL/DLL.csproj" />
-  <Project Path="Domain/Domain.csproj" />
-  <Project Path="OnlineLibrary_BookKey/OnlineLibrary_BookKey.csproj" />
+  <Folder Name="/backend/">
+    <Project Path="BLL/BLL.csproj" />
+    <Project Path="DLL/DLL.csproj" />
+    <Project Path="Domain/Domain.csproj" />
+    <Project Path="OnlineLibrary_BookKey/OnlineLibrary_BookKey.csproj" />
+  </Folder>
 </Solution>
