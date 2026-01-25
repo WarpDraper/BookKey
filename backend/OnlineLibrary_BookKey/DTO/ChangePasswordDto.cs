@@ -1,0 +1,12 @@
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace WebApplication25.Models
+{
+    public class ChangePasswordDto
+    {
+        [Required(ErrorMessage = "current password")]
+        public string CurrentPassword {  get; set; }
+        [Required(ErrorMessage = "new password")]
+        public string NewPassword { get; set; }
+    }
+}
