@@ -4,8 +4,13 @@ import type { Book } from "../types/books";
 
 export const bookService = createApi({
   reducerPath: 'bookService',
+<<<<<<< HEAD
+  baseQuery: createBaseQuery('book'),
+  tagTypes: ['Book'],
+=======
   baseQuery: createBaseQuery('books'),
   tagTypes: ['Books'],
+>>>>>>> b79f40358c97693e3cbe40aeb5d035e72b98c778
 
   endpoints: (build) => ({
     // 🔹 Отримати всі книги
@@ -14,7 +19,11 @@ export const bookService = createApi({
         url: '',
         method: 'GET',
       }),
+<<<<<<< HEAD
+      providesTags: ['Book'],
+=======
       providesTags: ['Books'],
+>>>>>>> b79f40358c97693e3cbe40aeb5d035e72b98c778
     }),
 
     // 🔹 Отримати книгу по id (BookDetails)
@@ -24,7 +33,11 @@ export const bookService = createApi({
         method: 'GET',
       }),
       providesTags: (_result, _error, id) => [
+<<<<<<< HEAD
+        { type: 'Book', id },
+=======
         { type: 'Books', id },
+>>>>>>> b79f40358c97693e3cbe40aeb5d035e72b98c778
       ],
     }),
   }),
