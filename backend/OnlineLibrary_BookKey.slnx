@@ -1,7 +1,7 @@
 <Solution>
   <Folder Name="/backend/">
     <Project Path="BLL/BLL.csproj" />
-    <Project Path="DLL/DLL.csproj" />
+    <Project Path="DAL/DAL.csproj" Id="a450b9d3-1966-4480-bb5a-3b009ad4ceb0" />
     <Project Path="Domain/Domain.csproj" />
     <Project Path="OnlineLibrary_BookKey/OnlineLibrary_BookKey.csproj" />
   </Folder>

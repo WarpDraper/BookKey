@@ -1,5 +1,4 @@
 ﻿using AuthDomain;
-using Domain;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,15 +9,18 @@ using System.Threading.Tasks;
 
 namespace DAL.Context
 {
+
+
     public class ApplicationContext : IdentityDbContext<ApplicationUser>
     {
-        public ApplicationContext(DbContextOptions<ApplicationContext> opt) :base(opt){
+        public ApplicationContext(DbContextOptions<ApplicationContext> opt) : base(opt)
+        {
 
         }
         protected override void OnModelCreating(ModelBuilder builder)
         {
 
         }
-        public DbSet<ApplicationUser> Users {  get; set; }
+        public DbSet<ApplicationUser> Users { get; set; }
     }
 }
