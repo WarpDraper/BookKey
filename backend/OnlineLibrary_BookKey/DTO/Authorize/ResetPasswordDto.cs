@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebApplication25.Models
+namespace OnlineLibrary_BookKey.DTO.Authorize
 {
     public class ResetPasswordDto
     {

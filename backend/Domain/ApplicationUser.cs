@@ -1,13 +1,12 @@
+using Domain;
 using Microsoft.AspNetCore.Identity;
 
 namespace AuthDomain
 {
     public class ApplicationUser : IdentityUser
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public int Age { get; set; }
         public string? RefreshToken { get; set; }
         public DateTime RefreshTokenExpiryTime { get; set; }
+        public virtual ICollection<Book> FavoriteBooks { get; set; } = new List<Book>();
     }
 }

@@ -1,8 +1,13 @@
 using AuthBLL.EmailService;
-using AuthBLL.Services;
 using AuthDomain;
+using BLL.BookService;
+using BLL.BookUser;
+using BLL.JwtToken;
+using BLL.Services;
 using DAL;
 using DAL.Context;
+using DAL.UnitOfWork;
+using Domain;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -11,7 +16,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
+using OnlineLibrary_BookKey.Configuration.Role;
+using OnlineLibrary_BookKey.Middleware;
+using System.Reflection.Metadata;
 using TaskerDAL;
+using TaskerDAL.UnitOfWork;
 using WebApplication25.Configuration.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -69,7 +78,11 @@ builder.Services.AddAuthentication(options =>
 // ==========================================
 // 3. ВЛАСНІ СЕРВІСИ
 // ==========================================
-builder.Services.AddTransient<TokenService>();
+builder.Services.AddTransient<ITokenService,TokenService>();
+builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddScoped<IBookUserService, BookUserService>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddTransient<IRepository<Book>, BookRepository>();
 builder.Services.AddAutoMapper(x => x.AddProfile<MappingProfile>());
 var emailSet = builder.Configuration.GetSection("EmailSettings").Get<EmailSettings>();
 builder.Services.AddSingleton(emailSet);
@@ -139,9 +152,24 @@ app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();
-
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+        await DbInitializer.SeedAsync(userManager, roleManager);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Помилка при створенні ролей");
+    }
+}
 app.MapStaticAssets();
-
+app.UseStaticFiles();
+app.UseMiddleware<ExceptionMiddleware>();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Document}/{action=Index}/{id?}")

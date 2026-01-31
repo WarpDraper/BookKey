@@ -1,4 +1,5 @@
 ﻿using AuthDomain;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -11,38 +12,46 @@ using System.Text;
 
 using System.Threading.Tasks;
 
-namespace AuthBLL.Services
+namespace BLL.JwtToken
 {
-    public class TokenService
+    public class TokenService : ITokenService
     {
         private readonly IConfiguration _configuration;
-        public TokenService(IConfiguration configuration)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public TokenService(IConfiguration configuration, UserManager<ApplicationUser> userManager)
         {
             _configuration = configuration;
+            _userManager = userManager;
         }
-        public string CreateToken(ApplicationUser user)
+        public async Task<string> CreateTokenAsync(ApplicationUser user)
         {
             var claims = new List<Claim>()
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim(ClaimTypes.Name, user.UserName),
-                new Claim("FirstName", user.FirstName),
-                new Claim("LastName", user.LastName),
-                new Claim("Age",user.Age.ToString()),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email)
+
             };
 
+            var roles = await _userManager.GetRolesAsync(user);
+
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWTSettings:key"]));
-            var creds = new SigningCredentials(key,SecurityAlgorithms.HmacSha256);
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                    issuer: _configuration["JWTSettings:Issuer"],
-                    audience: _configuration["JWTSettings:Audience"],
-                    claims:claims,
-                    expires: DateTime.Now.AddMinutes(15),
-                    signingCredentials:creds
-                );
-            var JWT = new JwtSecurityTokenHandler().WriteToken(token);
-            return JWT;
+                issuer: _configuration["JWTSettings:Issuer"],
+                audience: _configuration["JWTSettings:Audience"],
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(15),
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
         public string CreateRefreshToken()

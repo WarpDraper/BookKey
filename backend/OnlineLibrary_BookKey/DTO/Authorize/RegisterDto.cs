@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace RustProject.Models
+namespace OnlineLibrary_BookKey.DTO.Authorize
 {
     public class RegisterDto
     {

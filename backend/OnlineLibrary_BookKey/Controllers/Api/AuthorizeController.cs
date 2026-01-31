@@ -1,6 +1,5 @@
 ﻿
 using AuthBLL.EmailService;
-using AuthBLL.Services;
 using AuthDomain;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -10,12 +9,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using RustProject.Models;
 using System.Diagnostics;
 using System.Formats.Asn1;
 using System.Security.Claims;
-using WebApplication25.Models;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using OnlineLibrary_BookKey.DTO.Authorize;
+using BLL.JwtToken;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -129,9 +128,9 @@ namespace WebApplication25.Controllers
                         await HttpContext.SignInAsync(
                             CookieAuthenticationDefaults.AuthenticationScheme,
                             new ClaimsPrincipal(claimsIdentity));
-                        var token_ = _tokenService.CreateToken(findUser);
+                        var token_ = _tokenService.CreateTokenAsync(findUser);
                         _logger.LogInformation("Login good, send token for user  {Email}", value.Email);
-                        return Ok(new { Token = token_, RefreshToken = findUser.RefreshToken, Email = findUser.Email, Name = findUser.UserName,findUser.FirstName,findUser.Age, Expiress = DateTime.Now.AddMinutes(15) });
+                        return Ok(new { Token = token_, RefreshToken = findUser.RefreshToken, Email = findUser.Email, Name = findUser.UserName, Expiress = DateTime.Now.AddMinutes(15) });
                     }
                     else
                     {
@@ -167,7 +166,7 @@ namespace WebApplication25.Controllers
                 return Unauthorized(new { Message = "Invalid refresh token" });
             }
             _logger.LogInformation("Refresh token create for user ");
-            var newToken = _tokenService.CreateToken(findUser);
+            var newToken = _tokenService.CreateTokenAsync(findUser);
             var newRefreshToken = _tokenService.CreateRefreshToken();
 
             findUser.RefreshToken = newRefreshToken;
